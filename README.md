@@ -5,6 +5,19 @@ The first training script uses the Acronym Dataset. The second training script u
 
 Authors - [Shashwat Ghatiwala](https://github.com/shashwatghatiwala1/) and [Jingchao Xie](https://github.com/Jchao-Xie/) from [Technical University of Munich](https://www.tum.de/en/)
 
+Structure of the repository - 
+
+- Overfitting a diffusion model on all grasps of one object
+- Unconstrained Grasp Diffusion Model
+    * Dataset Preparation
+    * Training
+    * Visualizing Model's outputs
+- Constrained Grasp Diffusion Model
+    * Dataset Preparation
+    * Training
+    * Visualizing Model's outputs
+- Evaluation using PyBullet
+
 ## Model Architecture
 
 ![example](docs/model_arch.png)
