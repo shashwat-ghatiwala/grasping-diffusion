@@ -20,7 +20,13 @@ Structure of the repository -
 
 ## Model Architecture
 
+Unconstrained Model
+
 ![example](docs/model_arch.png)
+
+Constrained Model
+
+![example](docs/model_arch_constrained.png)
 
 ## Overfitting 
 
