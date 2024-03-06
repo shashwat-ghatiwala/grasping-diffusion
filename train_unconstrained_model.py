@@ -354,7 +354,6 @@ mid_time_losses = []
 for param_group in optimizer.param_groups:
     print("LEARNING RATE: ", param_group['lr'])
 
-
 scheduler = ReduceLROnPlateau(optimizer, patience=1000, verbose=True, factor=0.85)
 
 PATH = "/home/username/tum-adlr-03-main/training/checkpoints_scale_jc/v2/trained_model_w_scale.pt"
