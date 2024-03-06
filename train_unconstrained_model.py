@@ -10,16 +10,12 @@ import torch
 import trimesh
 import mesh2sdf
 from scipy.spatial.transform import Rotation as R
-from dataloader.loader_w_scale import AcronymAndSDFDataset
+from dataloader.unconstrained_loader import AcronymAndSDFDataset
 from tqdm import tqdm
 from positional_embeddings import PositionalEmbedding
 import gc
 
 from torch.optim.lr_scheduler import ExponentialLR, ReduceLROnPlateau
-
-# from torch.utils.tensorboard import SummaryWriter
-
-# from model import NoiseScheduler, Grasp_Diffusion
 
 class NoiseScheduler():
     def __init__(self,
@@ -181,7 +177,7 @@ class Conv3DModel(nn.Module):
         self.bn3 = nn.BatchNorm3d(num_features=l3)
         # self.conv3_2 = nn.Conv3d(in_channels=l3, out_channels=l3, kernel_size=(3,3,3), padding=1)
 
-        # self.bn_bool = False
+        # Layer 4
         self.conv4_1 = nn.Conv3d(in_channels=l3, out_channels=l4, kernel_size=(3,3,3), padding=1)
         self.bn4 = nn.BatchNorm3d(num_features=l4)
         # self.conv4_2 = nn.Conv3d(in_channels=l4, out_channels=l4, kernel_size=(3,3,3), padding=1)
@@ -232,31 +228,9 @@ class Linear_Block(nn.Module):
     def __init__(self, input_dim) -> None:
         super(Linear_Block, self).__init__()
 
-        # self.linear = nn.Sequential(
-        #     nn.Linear(input_dim, 512),
-        #     nn.ReLU(),
-        #     nn.Linear(512, 512),
-        #     nn.ReLU(),
-        #     nn.Linear(512, 512),
-        #     nn.ReLU(),
-        #     nn.Linear(512, 512),
-        #     nn.ReLU(),
-        #     nn.Linear(512, 7)
-        # )
-        # hidden_size = 192
-        # layers = [nn.Linear(input_dim, hidden_size), nn.ReLU()]
-        # for _ in range(6):
-        #     layers.append(Block(hidden_size))
-        # layers.append(nn.Linear(hidden_size, 7))
         layers = []
         layers.append(Block_2(input_dim, 2048))
-        # layers.append(Block(input_dim))
-        # layers.append(Block_2(2048, 1024))
-        # layers.append(Block(input_dim))
         layers.append(Block(2048))
-        # layers.append(Block(1024))
-        # layers.append(Block(1024))
-        # layers.append(Block_2(2048, 7))
         layers.append(nn.Linear(2048, 7))
 
         self.linear = nn.Sequential(*layers)
@@ -300,8 +274,6 @@ class Grasp_Diffusion(nn.Module):
         latent_mesh_repr_size = level_channels[-1] * 4**3
         # hidden_dim_mesh = 256
 
-        # self.conv_emb_block = Conv_Emb_Block(latent_mesh_repr_size, hidden_dim_mesh).to(device)
-
         grasp_repr_size = 7 * grasp_emb_size
         # concat_size = len(self.time_mlp.layer) + hidden_dim_mesh + grasp_repr_size
         concat_size = time_emb + latent_mesh_repr_size + grasp_repr_size + self.scale_dim
@@ -317,13 +289,6 @@ class Grasp_Diffusion(nn.Module):
 
         mesh_repr_flattened = nn.Flatten(1)(out)
 
-        ### Attention Layer modification
-        # y = mesh_repr_flattened.view(-1, 1, mesh_repr_flattened.shape[1])
-        # attn_output, _ = self.multihead_attn(y, y, y)
-        # y = attn_output.view(mesh_repr_flattened.size(0), -1) 
-
-        # latent_mesh_repr = self.conv_emb_block(mesh_repr_flattened)
-
         time_ = self.time_mlp(timesteps.to("cpu"))
         time_ = time_.float().to(device)
 
@@ -335,7 +300,6 @@ class Grasp_Diffusion(nn.Module):
         scale_emb = self.scale_embedder(scale_emb.to(device))
         scale_emb = scale_emb.float().to(device)
         x = torch.cat((x_emb, time_, mesh_repr_flattened.float().to(device), scale_emb), dim=-1)
-        # x = torch.cat((x_emb.float().to(device), time_.float().to(device), y.float().to(device)), dim=-1)
 
         x = self.joint_mlp(x)
 
@@ -344,7 +308,7 @@ class Grasp_Diffusion(nn.Module):
 # Enter directory path of Acronym dataset
 data_dir = "/home/username/data"
 
-grasp_dict_file = os.path.join(data_dir, 'grasp_split.json')
+grasp_dict_file = os.path.join(data_dir, 'unconstrained_data_split.json.json')
 grasp_data = json.load(open(grasp_dict_file, "r"))
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
