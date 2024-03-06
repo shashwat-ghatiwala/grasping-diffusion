@@ -72,6 +72,10 @@ See the `evaluation` folder for the corresponding files.
 
 The `evaluate_grasps_pybullet.py` takes the generated grasps from the model and evaluates its feasbility using the Frank Panda gripper.
 
+Our experiment's results are below: 
+
+![example_eval](docs/grasps_eval.png)
+
 ## References
 
 * Noise Scheduler and Positional Embeddings from [tiny-diffusion](https://github.com/tanelp/tiny-diffusion/tree/master).
