@@ -22,16 +22,17 @@ Structure of the repository -
 
 ![example](docs/model_arch.png)
 
+## Overfitting 
+
+Before we train the model on the entire dataset, we overfit a diffusion model on all grasps of one object. The purpose of this is to check if our diffusion-based pipeline is working properly
+
+The code for this is in `overfit_1_object.ipynb`
+
 ## Unconstrained Model
 
 Dataset used for Grasps - [Acronym Dataset](https://github.com/NVlabs/acronym) <br />
 Dataset for Meshes - [ShapeNetSem meshes](https://shapenet.org/) <br />
 Code to preprocess the acronym dataset is in `utils/converted.ipynb`
-
-### Overfitting 
-
-Before we train the model on the entire dataset, we overfit a diffusion model on all grasps of one object.<br /> 
-The code for this is in `overfit_1_object.ipynb`
 
 ### Training
 
